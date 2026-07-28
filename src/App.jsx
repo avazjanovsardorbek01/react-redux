@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import { Main, Login, Register } from "./components";
+import Navbar from "./components/navbar";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -8,6 +9,7 @@ function App() {
   return (
     <>
       <div>
+        <Navbar />
         <Routes>
           <Route path="/" element={<Main />} />
           <Route path="/login" element={<Login />} />
