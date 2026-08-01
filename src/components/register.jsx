@@ -3,10 +3,46 @@ import { Link } from "react-router-dom";
 import { logo } from "../constants";
 import Input from "../ui/input";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUserStart } from "../slice/auth";
+import AuthService from "../service/auth";
+import { registerUserSuccess, registerUserFailure } from "../slice/auth";
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const { isLoading } = useSelector((state) => state.auth);
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    dispatch(registerUserStart());
+
+    const user = {
+      username: name,
+      email: email,
+      password: password,
+    };
+
+    try {
+      const response = await AuthService.UserRegister(user);
+
+      console.log("Response:", response);
+      console.log("Data:", response.data);
+
+      dispatch(registerUserSuccess(response.data));
+    } catch (error) {
+      console.log("Ошибка:", error);
+
+      if (error.response) {
+        console.log("Статус:", error.response.status);
+        console.log("Данные ошибки:", error.response.data);
+      }
+
+      dispatch(registerUserFailure(error.response?.data));
+    }
+  };
   return (
     <div
       className="container-fluid bg-light d-flex justify-content-center align-items-center"
@@ -45,8 +81,13 @@ const Register = () => {
             setState={setPassword}
           />
 
-          <button className="btn btn-warning w-100 py-2 fw-bold" type="submit">
-            Sign In
+          <button
+            className="btn btn-warning w-100 py-2 fw-bold"
+            type="submit"
+            onClick={handleRegister}
+            disabled={isLoading}
+          >
+            {isLoading ? "Registering..." : "Register"}
           </button>
         </form>
 
