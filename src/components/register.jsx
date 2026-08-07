@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUserStart } from "../slice/auth";
 import AuthService from "../service/auth";
+import Validation from "./validation.jsx";
 import { registerUserSuccess, registerUserFailure } from "../slice/auth";
 const Register = () => {
   const [name, setName] = useState("");
@@ -33,14 +34,9 @@ const Register = () => {
 
       dispatch(registerUserSuccess(response.data));
     } catch (error) {
-      console.log("Ошибка:", error);
+      console.log("Ошибка:", error.response?.data);
 
-      if (error.response) {
-        console.log("Статус:", error.response.status);
-        console.log("Данные ошибки:", error.response.data);
-      }
-
-      dispatch(registerUserFailure(error.response?.data));
+      dispatch(registerUserFailure(error.response?.data.errors));
     }
   };
   return (
@@ -65,7 +61,7 @@ const Register = () => {
             Добро пожаловать! Создайте новый аккаунт.
           </p>
         </div>
-
+        <Validation />
         <form>
           <Input label={"Username"} state={name} setState={setName} />
           <Input

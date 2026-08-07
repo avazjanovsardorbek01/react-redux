@@ -4,7 +4,13 @@ import { logo } from "../constants";
 import Input from "../ui/input";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUserStart } from "../slice/auth";
+import Validation from "./validation.jsx";
+import {
+  loginUserStart,
+  loginUserSuccess,
+  loginUserFailure,
+} from "../slice/auth";
+import AuthService from "../service/auth";
 const Login = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -13,11 +19,18 @@ const Login = () => {
   const { isLoading } = useSelector((state) => state.auth);
   // console.log(auth);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     dispatch(loginUserStart());
+    const user = { email, password };
+    try {
+      const response = await AuthService.UserLogin(user);
+      console.log(response.data);
+      dispatch(loginUserSuccess());
+    } catch (error) {
+      dispatch(loginUserFailure());
+    }
   };
-
   return (
     <div
       className="container-fluid bg-light d-flex justify-content-center align-items-center"
@@ -40,10 +53,20 @@ const Login = () => {
             Добро пожаловать! Войдите в свой аккаунт.
           </p>
         </div>
-
+        <Validation />
         <form>
-          <Input label={"Email"} type="email" state={email} />
-          <Input label={"Password"} type="password" state={password} />
+          <Input
+            label={"Email"}
+            type="email"
+            state={email}
+            setState={setEmail}
+          />
+          <Input
+            label={"Password"}
+            type="password"
+            state={password}
+            setState={setPassword}
+          />
 
           <button
             disabled={isLoading}
