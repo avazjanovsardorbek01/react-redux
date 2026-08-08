@@ -25,8 +25,7 @@ const Login = () => {
     const user = { email, password };
     try {
       const response = await AuthService.UserLogin(user);
-      console.log(response.data);
-      dispatch(loginUserSuccess());
+      dispatch(loginUserSuccess(response.data.user));
     } catch (error) {
       dispatch(loginUserFailure());
     }

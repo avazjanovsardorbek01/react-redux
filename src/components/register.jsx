@@ -4,10 +4,13 @@ import { logo } from "../constants";
 import Input from "../ui/input";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUserStart } from "../slice/auth";
+import {
+  registerUserStart,
+  registerUserFailure,
+  registerUserSuccess,
+} from "../slice/auth";
 import AuthService from "../service/auth";
 import Validation from "./validation.jsx";
-import { registerUserSuccess, registerUserFailure } from "../slice/auth";
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -32,7 +35,7 @@ const Register = () => {
       console.log("Response:", response);
       console.log("Data:", response.data);
 
-      dispatch(registerUserSuccess(response.data));
+      dispatch(registerUserSuccess(response.data.user));
     } catch (error) {
       console.log("Ошибка:", error.response?.data);
 

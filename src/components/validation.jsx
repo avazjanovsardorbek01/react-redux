@@ -1,26 +1,32 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useCallback } from "react";
+
 const Validation = () => {
   const { error } = useSelector((state) => state.auth);
-  console.log("Validation error:", error);
 
-  const errorMessage = useCallback(() => {
-    return Object.keys(error).map((name) => {
-      const msg = error[name].join(", ");
-      return msg;
-    });
-  }, [error]);
+  if (!error) {
+    return null;
+  }
 
-  console.log(error !== null && errorMessage());
+  const messages =
+    typeof error === "string"
+      ? [error]
+      : Object.values(error).flatMap((value) =>
+          Array.isArray(value) ? value : [String(value)],
+        );
 
   return (
-    error !== null &&
-    errorMessage().map((msg, index) => (
-      <div key={index} className="alert alert-danger m-1 p-1 text-start " role="alert">
-        {msg}
-      </div>
-    ))
+    <div className="mb-3">
+      {messages.map((msg, index) => (
+        <div
+          key={index}
+          className="alert alert-danger m-1 p-2 text-start"
+          role="alert"
+        >
+          {msg}
+        </div>
+      ))}
+    </div>
   );
 };
 
